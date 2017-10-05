@@ -1,0 +1,70 @@
+{
+    "name": "storage-tank-detector",
+    "version": "0.0.3",
+    "description": "A GBDX task that detects storage tanks. Storage tanks include any round object containing oil, water, or gas.",
+    "properties": {
+        "isPublic": false,
+        "timeout": 18000
+    },
+    "inputPortDescriptors": [
+        {
+            "name": "ps_image",
+            "type": "directory",
+            "description": "Contains a 3-band pan-sharpened image in geotiff format and UTM projection. This directory should contain only one image otherwise one is selected arbitrarily.",
+            "required": true
+        },
+        {
+            "name": "model",
+            "type": "directory",
+            "description": "Contains a keras model in h5 format.",
+            "required": false
+        },
+        {
+            "name": "threshold",
+            "type": "string",
+            "description": "Decision threshold. Defaults to 0.5.",
+            "required": false
+        },
+        {
+            "name": "min_compactness",
+            "type": "string",
+            "description": "Minimum compactness of a feature to qualify as a tank candidate. Default is 0.65.",
+            "required": false
+        },
+        {
+            "name": "min_size",
+            "type": "string",
+            "description": "The minimum area in m2 to qualify as a tank candidate. Default is 100.",
+            "required": false
+        },
+        {
+            "name": "max_size",
+            "type": "string",
+            "description": "Maximum area in m2 to qualify as a tank candidate. Default is 12000.",
+            "required": false
+        }
+    ],
+    "outputPortDescriptors": [
+        {
+            "name": "detections",
+            "type": "directory",
+            "description": "Contains geojson file with detection bounding boxes."
+        },
+        {
+            "name": "candidates",
+            "type": "directory",
+            "description": "Contains geojson file with candidate bounding boxes."
+        }
+    ],
+    "containerDescriptors": [
+        {
+            "type": "DOCKER",
+            "properties": {
+                "image": "tdgp/storage-tank-detector",
+                "domain": "nvidiap2"
+            },
+            "command": "python /storage-tank-detector.py",
+            "isPublic": true
+        }
+    ]
+}
