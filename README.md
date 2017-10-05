@@ -27,7 +27,7 @@ This is a sample workflow to detect tanks in the United Arab Emirates. The requi
     ```python
     td = gbdx.Task('storage-tank-detector')
     td.inputs.ps_image = join(input_location, 'ps-image')
-    td.inputs.min_size = '10'
+    td.inputs.min_size = '50'
     ```
 
 3. Create a workflow instance and specify where to save the output:
