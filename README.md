@@ -1,4 +1,4 @@
-# tank-detector
+# storage-tank-detector
 
 A GBDX task that detects tanks. Tanks are circular structures for storing oil, water or gas.
 
@@ -19,14 +19,15 @@ This is a sample workflow to detect tanks in the United Arab Emirates. The requi
 
     gbdx = Interface()
 
-    input_location = 's3://gbd-customer-data/32cbab7a-4307-40c8-bb31-e2de32f940c2/platform-stories/tank-detector/'
+    input_location = 's3://gbd-customer-data/32cbab7a-4307-40c8-bb31-e2de32f940c2/platform-stories/storage-tank-detector/'
     ```
 
 2. Create a task instance and set the required [inputs](#inputs):
 
     ```python
-    td = gbdx.Task('tank-detector')
+    td = gbdx.Task('storage-tank-detector')
     td.inputs.ps_image = join(input_location, 'ps-image')
+    td.inputs.min_size = '10'
     ```
 
 3. Create a workflow instance and specify where to save the output:
@@ -112,19 +113,19 @@ You need to install [Docker](https://docs.docker.com/engine/installation).
 Clone the repository:
 
 ```bash
-git clone https://github.com/platformstories/tank-detector
+git clone https://github.com/platformstories/storage-tank-detector
 ```
 
 Then build the image locally. Building requires input environment variables for protogen and GBDX AWS credentials. You will need to contact kostas.stamatiou@digitalglobe.com for access to Protogen.
 
 ```bash
-cd tank-detector
+cd storage-tank-detector
 docker build --build-arg PROTOUSER=<GitHub username> \
     --build-arg PROTOPASSWORD=<GitHub password> \
     --build-arg AWS_ACCESS_KEY_ID=<AWS access key> \
     --build-arg AWS_SECRET_ACCESS_KEY=<AWS secret key> \
     --build-arg AWS_SESSION_TOKEN=<AWS session token> \
-    -t tank-detector .
+    -t storage-tank-detector .
 ```
 
 ### Try out locally
@@ -132,13 +133,13 @@ docker build --build-arg PROTOUSER=<GitHub username> \
 You need a GPU and [nvidia-docker](https://github.com/NVIDIA/nvidia-docker). Create a container in interactive mode and mount the sample input under `/mnt/work/input/`:
 
 ```bash
-nvidia-docker run -v full/path/to/sample-input:/mnt/work/input -it tank-detector
+nvidia-docker run -v full/path/to/sample-input:/mnt/work/input -it storage-tank-detector
 ```
 
 Then, within the container:
 
 ```bash
-python /tank-detector.py
+python /storage-tank-detector.py
 ```
 
 Confirm that the output geojsons are under `/mnt/work/output/`.
@@ -154,11 +155,11 @@ docker login
 Tag your image using your username and push it to DockerHub:
 
 ```bash
-docker tag tank-detector yourusername/tank-detector
-docker push yourusername/tank-detector
+docker tag storage-tank-detector yourusername/storage-tank-detector
+docker push yourusername/storage-tank-detector
 ```
 
-The image name should be the same as the image name under containerDescriptors in tank-detector.json.
+The image name should be the same as the image name under containerDescriptors in storage-tank-detector.json.
 
 Alternatively, you can link this repository to a [Docker automated build](https://docs.docker.com/docker-hub/builds/). Every time you push a change to the repository, the Docker image gets automatically updated.
 
@@ -168,7 +169,7 @@ In a Python terminal:
 ```python
 from gbdxtools import Interface
 gbdx = Interface()
-gbdx.task_registry.register(json_filename = 'tank-detector.json')
+gbdx.task_registry.register(json_filename = 'storage-tank-detector.json')
 ```
 
 Note: If you change the task image, you need to reregister the task with a higher version number in order for the new image to take effect. Keep this in mind especially if you use Docker automated build.
