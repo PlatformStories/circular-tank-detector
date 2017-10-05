@@ -73,8 +73,6 @@ class TankDetector(GbdxTaskInterface):
         except:
             self.model = '/model.h5'
 
-        print(self.model)
-
         # String inputs
         self.threshold = float(self.get_input_string_port('threshold', '0.5'))
         self.min_compactness = float(self.get_input_string_port('min_compactness', '0.65'))
