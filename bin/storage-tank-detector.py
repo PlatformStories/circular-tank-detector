@@ -1,5 +1,5 @@
 import numpy as np
-import geojson, json, pygeoj
+import geojson, json
 import time, os, shutil, re, ast
 import protogen
 import utm
