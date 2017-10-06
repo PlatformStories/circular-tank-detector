@@ -7,8 +7,6 @@ import cv2
 import subprocess
 
 from expand_bboxes import *
-from shapely.geometry import shape
-from shapely.strtree import STRtree
 from glob import glob
 from osgeo import gdal, osr
 from keras.models import load_model
@@ -78,7 +76,7 @@ class TankDetector(GbdxTaskInterface):
         self.min_compactness = float(self.get_input_string_port('min_compactness', '0.65'))
         self.min_size = int(self.get_input_string_port('min_size', '100'))
         self.max_size = int(self.get_input_string_port('max_size', '12000'))
-        self.ptaug = ast.literal_eval(self.get_input_string_port('prediction-time-augmentation', 'False'))
+        self.ptaug = ast.literal_eval(self.get_input_string_port('prediction_time_aug', 'False'))
 
         # Create output directories
         self.detections_dir = self.get_output_data_port('detections')
