@@ -72,6 +72,7 @@ GBDX input ports can only be of "directory" or "string" type. Booleans, integers
 | ps_image | directory | Contains a 3-band pan-sharpened image in geotiff format and UTM projection. This directory should contain only one image otherwise one is selected arbitrarily. | True |
 | model | directory | Contains a keras model in h5 format. | False |
 | threshold | string | Decision threshold. Defaults to 0.5. | False |
+| prediction_time_aug | string | When deploying the model rotate each chip 4 times and average all predictions. This will increase deployment time by a factor of four, but tends to result in higher accuracy. Defaults to False. | False |
 | min_compactness | string | Minimum compactness of a feature to qualify as a tank candidate. Default is 0.65. | False |
 | min_size | string | The minimum area in m2 to qualify as a tank candidate. Default is 100. | False |
 | max_size | string | Maximum area in m2 to qualify as a tank candidate. Default is 12000. | False |

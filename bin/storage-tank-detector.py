@@ -1,6 +1,6 @@
 import numpy as np
 import geojson, json, pygeoj
-import time, os, shutil, re
+import time, os, shutil, re, ast
 import protogen
 import utm
 import cv2
@@ -78,6 +78,7 @@ class TankDetector(GbdxTaskInterface):
         self.min_compactness = float(self.get_input_string_port('min_compactness', '0.65'))
         self.min_size = int(self.get_input_string_port('min_size', '100'))
         self.max_size = int(self.get_input_string_port('max_size', '12000'))
+        self.ptaug = ast.literal_eval(self.get_input_string_port('prediction-time-augmentation', 'False'))
 
         # Create output directories
         self.detections_dir = self.get_output_data_port('detections')
@@ -229,7 +230,12 @@ class TankDetector(GbdxTaskInterface):
             # Deploy model on batch
             print 'Classifying batch {} of {}'.format(no+1, no_batches)
             t1 = time.time()
-            yprob = list(model.predict_on_batch(X))
+
+            if self.ptaug:
+                all_yprob = [model.predict(np.rot90(m=X, k=nr, axes=(1,2))) for nr in range(4)]
+                yprob = list(np.mean(all_yprob, axis=0))
+            else:
+                yprob = list(model.predict_on_batch(X))
 
             # create dict of tank fids and certainties
             for ix, pred in enumerate(yprob):

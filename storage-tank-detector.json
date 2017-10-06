@@ -26,6 +26,12 @@
             "required": false
         },
         {
+            "name": "prediction_time_aug",
+            "type": "string",
+            "description": "When deploying the model rotate each chip 4 times and avcerage all predictions. This will increase deployment time by a factor of four, but tends to result in higher accuracy. Defaults to False.",
+            "required": false
+        },
+        {
             "name": "min_compactness",
             "type": "string",
             "description": "Minimum compactness of a feature to qualify as a tank candidate. Default is 0.65.",
