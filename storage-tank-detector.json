@@ -1,9 +1,9 @@
 {
     "name": "storage-tank-detector",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "description": "A GBDX task that detects storage tanks. Storage tanks include any round object containing oil, water, or gas.",
     "properties": {
-        "isPublic": false,
+        "isPublic": true,
         "timeout": 18000
     },
     "inputPortDescriptors": [

@@ -4,8 +4,6 @@ A GBDX task that detects tanks. Tanks are circular structures for storing oil, w
 
 The input to the task is pan-sharpened image in UTM projection. The output is a geojson file with the detection bounding boxes.
 
-
-
 ## Run
 
 This is a sample workflow to detect tanks in the United Arab Emirates. The required input imagery is found in S3.
@@ -60,8 +58,6 @@ The task does the following:
 + Computes a max-tree structure of the input image.
 + Filters based on defined size and shape constraints that are characteristic of tanks, to produce candidate bounding boxes.
 + Chips out the candidates from the pan-sharpened image and feeds them to a Keras model, which classifies each candidate as 'Tank' or 'Other'. If a model is not provided as input, the task uses a default model built into the container.
-
-
 
 ## Inputs
 
