@@ -99,8 +99,7 @@ Training data was obtained from 20 WV03 and WV02 imagescolected between 2014 and
 
 #### Runtime
 
-This will depend on the amount of objects detected by Protogen in the image.
-Running over a 
+This will depend on the amount of objects detected by Protogen in the image. Running on the provided 30km2 image over UAE takes approximately 10 minutes to generate candidates objects, chip them from the original image, and classify the 21146 candidates.
 
 ## Development
 
