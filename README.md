@@ -1,12 +1,12 @@
-# storage-tank-detector
+# circular-tank-detector
 
-A GBDX task that detects tanks. Tanks are circular structures for storing oil, water or gas.
+A GBDX task that detects circular tanks. The tanks detected include any circular structures for storing oil, water or gas.
 
 The input to the task is pan-sharpened image in UTM projection. The output is a geojson file with the detection bounding boxes.
 
 ## Run
 
-This is a sample workflow to detect tanks in the United Arab Emirates. The required input imagery is found in S3.
+This is a sample workflow to detect tanks in the United Arab Emirates. The required input imagery is found in S3 in the provided location.
 
 1. Within an iPython terminal create a GBDX interface an specify the task input location:
 
@@ -17,13 +17,14 @@ This is a sample workflow to detect tanks in the United Arab Emirates. The requi
 
     gbdx = Interface()
 
-    input_location = 's3://gbd-customer-data/32cbab7a-4307-40c8-bb31-e2de32f940c2/platform-stories/storage-tank-detector/'
+    input_location =
+    's3://gbd-customer-data/32cbab7a-4307-40c8-bb31-e2de32f940c2/platform-stories/circular-tank-detector/'
     ```
 
 2. Create a task instance and set the required [inputs](#inputs):
 
     ```python
-    td = gbdx.Task('storage-tank-detector')
+    td = gbdx.Task('circular-tank-detector')
     td.inputs.ps_image = join(input_location, 'ps-image')
     td.inputs.min_size = '50'
     ```
@@ -56,8 +57,10 @@ This is a sample workflow to detect tanks in the United Arab Emirates. The requi
 The task does the following:
 
 + Computes a max-tree structure of the input image.
-+ Filters based on defined size and shape constraints that are characteristic of tanks, to produce candidate bounding boxes.
-+ Chips out the candidates from the pan-sharpened image and feeds them to a Keras model, which classifies each candidate as 'Tank' or 'Other'. If a model is not provided as input, the task uses a default model built into the container.
++ Filters based on defined size and shape constraints that are characteristic of
+circular tanks to produce candidate bounding boxes.
++ Chips out the candidates from the pan-sharpened image and feeds them to a
+Keras model, which classifies each candidate as 'tank' or 'other'. If a model is not provided as input, the task uses a default model built into the container.
 
 ## Inputs
 
@@ -66,7 +69,7 @@ GBDX input ports can only be of "directory" or "string" type. Booleans, integers
 | Name  | Type | Description | Required |
 |---|---|---|---|
 | ps_image | directory | Contains a 3-band pan-sharpened image in geotiff format and UTM projection. This directory should contain only one image otherwise one is selected arbitrarily. | True |
-| model | directory | Contains a keras model in h5 format. | False |
+| model | directory | Contains a Keras model in h5 format. | False |
 | threshold | string | Decision threshold. Defaults to 0.5. | False |
 | prediction_time_aug | string | When deploying the model rotate each chip 4 times and average all predictions. This will increase deployment time by a factor of four, but tends to result in higher accuracy. Defaults to False. | False |
 | min_compactness | string | Minimum compactness of a feature to qualify as a tank candidate. Default is 0.65. | False |
@@ -110,19 +113,19 @@ You need to install [Docker](https://docs.docker.com/engine/installation).
 Clone the repository:
 
 ```bash
-git clone https://github.com/platformstories/storage-tank-detector
+git clone https://github.com/platformstories/circular-tank-detector
 ```
 
 Then build the image locally. Building requires input environment variables for protogen and GBDX AWS credentials. You will need to contact kostas.stamatiou@digitalglobe.com for access to Protogen.
 
 ```bash
-cd storage-tank-detector
+cd circular-tank-detector
 docker build --build-arg PROTOUSER=<GitHub username> \
     --build-arg PROTOPASSWORD=<GitHub password> \
     --build-arg AWS_ACCESS_KEY_ID=<AWS access key> \
     --build-arg AWS_SECRET_ACCESS_KEY=<AWS secret key> \
     --build-arg AWS_SESSION_TOKEN=<AWS session token> \
-    -t storage-tank-detector .
+    -t circular-tank-detector .
 ```
 
 ### Try out locally
@@ -130,13 +133,13 @@ docker build --build-arg PROTOUSER=<GitHub username> \
 You need a GPU and [nvidia-docker](https://github.com/NVIDIA/nvidia-docker). Create a container in interactive mode and mount the sample input under `/mnt/work/input/`:
 
 ```bash
-nvidia-docker run -v full/path/to/sample-input:/mnt/work/input -it storage-tank-detector
+nvidia-docker run -v full/path/to/sample-input:/mnt/work/input -it circular-tank-detector
 ```
 
 Then, within the container:
 
 ```bash
-python /storage-tank-detector.py
+python /circular-tank-detector.py
 ```
 
 Confirm that the output geojsons are under `/mnt/work/output/`.
@@ -152,11 +155,11 @@ docker login
 Tag your image using your username and push it to DockerHub:
 
 ```bash
-docker tag storage-tank-detector yourusername/storage-tank-detector
-docker push yourusername/storage-tank-detector
+docker tag circular-tank-detector yourusername/circular-tank-detector
+docker push yourusername/circular-tank-detector
 ```
 
-The image name should be the same as the image name under containerDescriptors in storage-tank-detector.json.
+The image name should be the same as the image name under containerDescriptors in circular-tank-detector.json.
 
 Alternatively, you can link this repository to a [Docker automated build](https://docs.docker.com/docker-hub/builds/). Every time you push a change to the repository, the Docker image gets automatically updated.
 
@@ -166,7 +169,7 @@ In a Python terminal:
 ```python
 from gbdxtools import Interface
 gbdx = Interface()
-gbdx.task_registry.register(json_filename = 'storage-tank-detector.json')
+gbdx.task_registry.register(json_filename = 'circular-tank-detector.json')
 ```
 
 Note: If you change the task image, you need to reregister the task with a higher version number in order for the new image to take effect. Keep this in mind especially if you use Docker automated build.

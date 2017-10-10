@@ -1,7 +1,7 @@
 {
-    "name": "storage-tank-detector",
-    "version": "0.0.6",
-    "description": "A GBDX task that detects storage tanks. Storage tanks include any round object containing oil, water, or gas.",
+    "name": "circular-tank-detector",
+    "version": "0.0.1",
+    "description": "A GBDX task that detects circular storage tanks.",
     "properties": {
         "isPublic": true,
         "timeout": 18000
@@ -66,10 +66,10 @@
         {
             "type": "DOCKER",
             "properties": {
-                "image": "tdgp/storage-tank-detector",
+                "image": "tdgp/circular-tank-detector",
                 "domain": "nvidiap2"
             },
-            "command": "python /storage-tank-detector.py",
+            "command": "python /circular-tank-detector.py",
             "isPublic": true
         }
     ]
