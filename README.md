@@ -17,8 +17,7 @@ This is a sample workflow to detect tanks in the United Arab Emirates. The requi
 
     gbdx = Interface()
 
-    input_location =
-    's3://gbd-customer-data/32cbab7a-4307-40c8-bb31-e2de32f940c2/platform-stories/circular-tank-detector/'
+    input_location = 's3://gbd-customer-data/32cbab7a-4307-40c8-bb31-e2de32f940c2/platform-stories/circular-tank-detector/'
     ```
 
 2. Create a task instance and set the required [inputs](#inputs):
@@ -57,10 +56,8 @@ This is a sample workflow to detect tanks in the United Arab Emirates. The requi
 The task does the following:
 
 + Computes a max-tree structure of the input image.
-+ Filters based on defined size and shape constraints that are characteristic of
-circular tanks to produce candidate bounding boxes.
-+ Chips out the candidates from the pan-sharpened image and feeds them to a
-Keras model, which classifies each candidate as 'tank' or 'other'. If a model is not provided as input, the task uses a default model built into the container.
++ Filters based on defined size and shape constraints that are characteristic of circular tanks to produce candidate bounding boxes.
++ Chips out the candidates from the pan-sharpened image and feeds them to a Keras model, which classifies each candidate as 'tank' or 'other'. If a model is not provided as input, the task uses a default model built into the container.
 
 ## Inputs
 
@@ -87,7 +84,7 @@ GBDX input ports can only be of "directory" or "string" type. Booleans, integers
 ## Comments/Recommendations
 
 + If precision is more important than recall then increase the threshold, and vice versa.
-+ Increading the size or compactness range will increase the run time, as more candidates are retrieved.
++ Increasing the size or compactness range will increase the run time, as more candidates are retrieved.
 + The required projection for the input images is UTM, due to the fact that candidate locations are derived based on geometrical properties such as size and compactness.
 + Metallic tanks with a sun reflection or tanks with a color gradient may be missed by the max-tree.
 + The compactness parameter represents how close an object is to a perfect circle (as an ideal tank should be). However, rust, shadows, and surrounding objects may contribute to a lower compactness. Allow some leeway when defining the minimum acceptable compactness to account for these inconsistencies.
@@ -102,7 +99,8 @@ Training data was obtained from 20 WV03 and WV02 imagescolected between 2014 and
 
 #### Runtime
 
-
+This will depend on the amount of objects detected by Protogen in the image.
+Running over a 
 
 ## Development
 
