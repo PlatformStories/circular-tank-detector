@@ -94,6 +94,17 @@ class TankDetector(GbdxTaskInterface):
         os.chdir(self.ps_dir)
         imsize = os.path.getsize(self.ps_image)/1e9 # image size in gb
 
+        # convert image to panchromatic
+        p = protogen.Interface('radex_scalar','band_fusion')
+        p.radex_scalar.band_fusion.operator = 'max'
+        p.radex_scalar.band_fusion.threshold = 1.0
+        p.image = self.ps_image
+        p.image_config.bands = [1,2,3] 
+        p.verbose = True
+        p.execute()
+
+        panc_out = p.output
+
         # Get dark candidates
         e = protogen.Interface('extract', 'objects')
         e.extract.objects.type = 'tanks'
@@ -117,7 +128,7 @@ class TankDetector(GbdxTaskInterface):
             e.image_config.number_of_tiles = np.ceil(imsize * 2)
             e.image_config.mosaic_method = 'max'
         e.verbose = True
-        e.image = self.ps_image
+        e.image = panc_out
         e.execute()
 
         dark_out = re.sub(str(int(np.ceil(imsize * 2))), 'MOSAIC', e.output)
@@ -285,3 +296,4 @@ class TankDetector(GbdxTaskInterface):
 if __name__ == '__main__':
     with TankDetector() as task:
         task.invoke()
+
