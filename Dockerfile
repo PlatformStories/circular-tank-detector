@@ -32,7 +32,7 @@ RUN git clone https://${PROTOUSER}:${PROTOPASSWORD}@github.com/digitalglobe/prot
     python setup.py install && \
     cd ..
 
-RUN aws s3 cp s3://gbd-customer-data/32cbab7a-4307-40c8-bb31-e2de32f940c2/platform-stories/circular-tank-detector/models/hand-classed/model.h5 /model.h5
+RUN aws s3 cp s3://gbd-customer-data/32cbab7a-4307-40c8-bb31-e2de32f940c2/platform-stories/circular-tank-detector/models/manually-curated/model.h5 /model.h5
 
 COPY ./bin /
 COPY keras.json /root/.keras/keras.json
