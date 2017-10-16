@@ -11,6 +11,7 @@ from glob import glob
 from osgeo import gdal, osr
 from keras.models import load_model
 from gbdx_task_interface import GbdxTaskInterface
+from multiprocessing import Pool, cpu_count
 from os.path import join
 
 
@@ -181,6 +182,7 @@ class TankDetector(GbdxTaskInterface):
 
     def extract_chips(self):
         'Extract chips from pan-sharpened image.'
+        cmds = []
 
         # Get UTM info for conversion
         utm_num, utm_proj4 = get_utm_info(join(self.ps_image_path, self.ps_image))
@@ -207,18 +209,12 @@ class TankDetector(GbdxTaskInterface):
             # format gdal_translate command
             out_loc = join(chip_dir, str(f_id) + '.jpg')
 
-            command = 'gdal_translate -of JPEG -eco -q -projwin {} {} {} {} {} {} '\
-                      '--config GDAL_TIFF_INTERNAL_MASK YES -co TILED='\
-                      'YES'.format(ulx, uly, lrx, lry,
-                                   join(self.ps_image_path, self.ps_image), out_loc)
+            cmds.append('gdal_translate -of JPEG -eco -q -projwin {} {} {} {} {} {} '\
+                        '--config GDAL_TIFF_INTERNAL_MASK YES -co TILED='\
+                        'YES'.format(ulx, uly, lrx, lry,
+                                     join(self.ps_image_path, self.ps_image), out_loc))
 
-            try:
-                execute_this(command)
-            except:
-                # Don't throw error if chip is ouside raster
-                print 'gdal_translate failed for the following command: ' + command # debug
-
-        return True
+        return cmds
 
 
     def deploy_model(self):
@@ -237,7 +233,7 @@ class TankDetector(GbdxTaskInterface):
             fids = [os.path.split(chip)[-1][:-4] for chip in batch]
 
             # Deploy model on batch
-            print 'Classifying batch {} of {}'.format(no+1, no_batches)
+            print('Classifying batch {} of {}'.format(no+1, no_batches))
             t1 = time.time()
 
             if self.ptaug:
@@ -286,7 +282,11 @@ class TankDetector(GbdxTaskInterface):
 
         # Format vector file and chip from pan image
         print 'Chipping...'
-        self.extract_chips()
+        cmds = self.extract_chips()
+        p = Pool(cpu_count())
+        p.map(execute_this, cmds)
+        p.close()
+        p.join()
 
         # Deploy model
         print 'Deploying model...'
