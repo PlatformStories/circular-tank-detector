@@ -1,6 +1,6 @@
 {
     "name": "circular-tank-detector",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "A GBDX task that detects circular storage tanks.",
     "properties": {
         "isPublic": true,
