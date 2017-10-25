@@ -1,12 +1,10 @@
 # circular-tank-detector
 
-A GBDX task that detects circular tanks. The tanks detected include any circular structures for storing oil, water or gas.
-
-The input to the task is pan-sharpened image in UTM projection. The output is a geojson file with the detection bounding boxes.
+A GBDX task that detects circular storage tanks. The input to the task is pan-sharpened image in UTM projection. The output is a geojson file with the detection bounding boxes.
 
 ## Run
 
-This is a sample workflow to detect tanks in the United Arab Emirates. The required input imagery is found in S3 in the provided location.
+This is a sample workflow. The required input imagery is found in S3 in the provided location.
 
 1. Within an iPython terminal create a GBDX interface an specify the task input location:
 
@@ -55,9 +53,9 @@ This is a sample workflow to detect tanks in the United Arab Emirates. The requi
 
 The task does the following:
 
-+ Computes a max-tree structure of the input image.
-+ Filters based on defined size and shape constraints that are characteristic of circular tanks to produce candidate bounding boxes.
-+ Chips out the candidates from the pan-sharpened image and feeds them to a Keras model, which classifies each candidate as 'tank' or 'other'. If a model is not provided as input, the task uses a default model built into the container.
++ Computes the max-tree from the panchromatic image (which is derived from the input pan-sharpened image).
++ Extracts candidate bounding boxes using the provided minimum compactness value and size range (defaults can also be used).
++ Chips out the candidates from the pan-sharpened image and feeds them to a Keras model, which classifies each candidate as 'tank' or 'other'. If a model is not provided as input, the task uses the default model included in the container.
 
 ## Inputs
 
@@ -84,22 +82,13 @@ GBDX input ports can only be of "directory" or "string" type. Booleans, integers
 ## Comments/Recommendations
 
 + If precision is more important than recall then increase the threshold, and vice versa.
-+ Increasing the size or compactness range will increase the run time, as more candidates are retrieved.
++ Increasing the size range and/or decreasing the minimum compactness will increase the run time, as more candidates are retrieved.
 + The required projection for the input images is UTM, due to the fact that candidate locations are derived based on geometrical properties such as size and compactness.
 + Metallic tanks with a sun reflection or tanks with a color gradient may be missed by the max-tree.
-+ The compactness parameter represents how close an object is to a perfect circle (as an ideal tank should be). However, rust, shadows, and surrounding objects may contribute to a lower compactness. Allow some leeway when defining the minimum acceptable compactness to account for these inconsistencies.
-
-## Changelog
-
-### Current version
 
 #### Training
 
-Training data was obtained from 20 WV03 and WV02 imagescolected between 2014 and 2017 over large oil fields. Locations with a diverse array of climates were used: Aden Yemen, Alexandria Egypt, Bahrain, Coatzacoalos Mexico, Santa Elena Ecuador, Gothenburg Sweden, Houston Texas, Kuwait, Liaoning China, Nederland Texas, Osaka Japan, Paraiso Mexico, Rotterdam Netherlands, Suez Egypt, Veracruz Mexico, and Zhenhai China. Chips were extracted from each image using PROTOGEN to get tank and no tank examples. 5000 chips (3:1 no tank:tank) were then manually curated to ensure accuracy and used as training data. The imagery was atmospherically compensated and pan-sharpened. The architecture of the neural network is VGG-16 and was pretrained on the imagenet dataset.
-
-#### Runtime
-
-This will depend on the amount of objects detected by Protogen in the image. Running on the provided 30km2 image over UAE takes approximately 8 minutes to generate candidates objects, chip them from the original image, and classify the 21146 chips.
+Training data was obtained from 20 WV03 and WV02 images collected between 2014 and 2017 over large oil fields. Locations with a diverse array of climates were used: Aden Yemen, Alexandria Egypt, Bahrain, Coatzacoalos Mexico, Santa Elena Ecuador, Gothenburg Sweden, Houston Texas, Kuwait, Liaoning China, Nederland Texas, Osaka Japan, Paraiso Mexico, Rotterdam Netherlands, Suez Egypt, Veracruz Mexico, and Zhenhai China. Positive and negative example chips were automatically extracted from each image using the procedure described [in this blog post](gbdxstories.digitalglobe.com/circular-tanks). 5000 chips (with a 3:1 ratio of positive to negative) were randomly selected and manually curated to correct for false positive and false negative examples. VGG-16, pretrained on ImageNet was trained using these chips. The resulting model is the one included in this task.
 
 ## Development
 
@@ -113,7 +102,7 @@ Clone the repository:
 git clone https://github.com/platformstories/circular-tank-detector
 ```
 
-Then build the image locally. Building requires input environment variables for protogen and GBDX AWS credentials. You will need to contact kostas.stamatiou@digitalglobe.com for access to Protogen.
+Then build the image locally. 
 
 ```bash
 cd circular-tank-detector

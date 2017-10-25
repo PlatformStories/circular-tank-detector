@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import numpy as np
 import geojson, json
 import time, os, shutil, re, ast
@@ -224,7 +226,6 @@ class TankDetector(GbdxTaskInterface):
 
         return cmds
 
-
     def deploy_model(self):
         'Deploy model.'
         model = load_model(self.model)
@@ -256,7 +257,7 @@ class TankDetector(GbdxTaskInterface):
                     tanks[fids[ix]] = pred[0]
 
             t2 = time.time()
-            print 'Batch classification time: {}s'.format(t2-t1)
+            print('Batch classification time: {}s'.format(t2-t1))
 
         # Save results to geojson
         with open('/candidates.geojson') as f:
@@ -285,11 +286,11 @@ class TankDetector(GbdxTaskInterface):
     def invoke(self):
 
         # Run protogen to get candidate bounding boxes
-        print 'Detecting candidates...'
+        print('Detecting candidates...')
         candidates = self.extract_candidates()
 
         # Format vector file and chip from pan image
-        print 'Chipping...'
+        print('Chipping...')
         cmds = self.extract_chips()
         p = Pool(cpu_count())
         p.map(execute_this, cmds)
@@ -297,7 +298,7 @@ class TankDetector(GbdxTaskInterface):
         p.join()
 
         # Deploy model
-        print 'Deploying model...'
+        print('Deploying model...')
         self.deploy_model()
 
 
