@@ -132,14 +132,22 @@ class TankDetector(GbdxTaskInterface):
         e.image = panc_out
         e.execute()
 
-        dark_out = re.sub(str(int(np.ceil(imsize * 2))), 'MOSAIC', e.output)
+        if imsize > 0.5:
+            to_replace_len = len(str(int(np.ceil(imsize * 2)))) + 5
+            dark_out = e.output[:-1 * to_replace_len] + '_MOSAIC.tif'
+        else:
+            dark_out = e.output
 
         # Get bright candidates
         e.extract.objects.shade = 'bright'
         e.athos.tree_type = 'max_tree'
         e.execute()
 
-        bright_out = re.sub(str(int(np.ceil(imsize * 2))), 'MOSAIC', e.output)
+        if imsize > 0.5:
+            to_replace_len = len(str(int(np.ceil(imsize * 2)))) + 5
+            bright_out = e.output[:-1 * to_replace_len] + '_MOSAIC.tif'
+        else:
+            bright_out = e.output
 
         v = protogen.Interface('vectorizer', 'bounding_box')
         v.vectorizer.bounding_box.filetype = 'geojson'
