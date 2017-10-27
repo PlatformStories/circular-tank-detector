@@ -57,6 +57,9 @@ The task does the following:
 + Extracts candidate bounding boxes using the provided minimum compactness value and size range (defaults can also be used).
 + Chips out the candidates from the pan-sharpened image and feeds them to a Keras model, which classifies each candidate as 'tank' or 'other'. If a model is not provided as input, the task uses the default model included in the container.
 
+The model was built with training data was obtained from 20 WV03 and WV02 images collected between 2014 and 2017 over large oil fields. Locations with a diverse array of climates were used: Aden Yemen, Alexandria Egypt, Bahrain, Coatzacoalos Mexico, Santa Elena Ecuador, Gothenburg Sweden, Houston Texas, Kuwait, Liaoning China, Nederland Texas, Osaka Japan, Paraiso Mexico, Rotterdam Netherlands, Suez Egypt, Veracruz Mexico, and Zhenhai China. Positive and negative example chips were automatically extracted from each image using the procedure described [in this blog post](gbdxstories.digitalglobe.com/circular-tanks). 5000 chips (with a 3:1 ratio of positive to negative) were randomly selected and manually curated to correct for false positive and false negative examples. VGG-16, pretrained on ImageNet was trained using these chips. The resulting model is the one included in this task.
+
+
 ## Inputs
 
 GBDX input ports can only be of "directory" or "string" type. Booleans, integers and floats are passed to the task as strings, e.g., "True", "10", "0.001".
@@ -81,14 +84,12 @@ GBDX input ports can only be of "directory" or "string" type. Booleans, integers
 
 ## Comments/Recommendations
 
++ Keep the input image size smaller than 3GB.
 + If precision is more important than recall then increase the threshold, and vice versa.
 + Increasing the size range and/or decreasing the minimum compactness will increase the run time, as more candidates are retrieved.
 + The required projection for the input images is UTM, due to the fact that candidate locations are derived based on geometrical properties such as size and compactness.
-+ Metallic tanks with a sun reflection or tanks with a color gradient may be missed by the max-tree.
++ False negatives may include tanks with a sun reflection or a color gradient. False positives may include various circular features including ponds and roundabouts.
 
-#### Training
-
-Training data was obtained from 20 WV03 and WV02 images collected between 2014 and 2017 over large oil fields. Locations with a diverse array of climates were used: Aden Yemen, Alexandria Egypt, Bahrain, Coatzacoalos Mexico, Santa Elena Ecuador, Gothenburg Sweden, Houston Texas, Kuwait, Liaoning China, Nederland Texas, Osaka Japan, Paraiso Mexico, Rotterdam Netherlands, Suez Egypt, Veracruz Mexico, and Zhenhai China. Positive and negative example chips were automatically extracted from each image using the procedure described [in this blog post](gbdxstories.digitalglobe.com/circular-tanks). 5000 chips (with a 3:1 ratio of positive to negative) were randomly selected and manually curated to correct for false positive and false negative examples. VGG-16, pretrained on ImageNet was trained using these chips. The resulting model is the one included in this task.
 
 ## Development
 
